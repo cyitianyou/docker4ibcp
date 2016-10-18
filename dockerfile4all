@@ -3,30 +3,38 @@
 # OS：debian:jessie
 FROM tomcat:8.5.5-jre8
 
-# 发布服务地址
-ENV PACKAGE_URL
-# 发布服务用户名
-ENV PACKAGE_USER
-# 发布服务用户密码
-ENV PACKAGE_PASSWORD
-# 版本路径
-ENV PACKAGE_VERSION
-
 # 作者
 MAINTAINER Niuren.Zhu "niuren.zhu@outlook.com"
 
-# 补充变量值
-RUN if [ "${PACKAGE_URL}" = "" ];then ${PACKAGE_URL}=http://ibas:8866/ibcp/; fi; \
-RUN if [ "${PACKAGE_USER}" = "" ];then ${PACKAGE_USER}=avatech/\ibcp_publisher; fi; \
-RUN if [ "${PACKAGE_PASSWORD}" = "" ];then ${PACKAGE_PASSWORD}=1q2w#E\$R; fi; \
-RUN if [ "${PACKAGE_VERSION}" = "" ];then ${PACKAGE_VERSION}=latest/; fi; \
+# 定义环境变量
+# 程序包-发布服务地址
+ENV IBCP_PACKAGE_URL http://ibas.club:8866/ibcp/
+# 程序包-发布服务用户名
+ENV IBCP_PACKAGE_USER avatech/\amber
+# 程序包-发布服务用户密码
+ENV IBCP_PACKAGE_PASSWORD Aa123456
+# 程序包-版本路径
+ENV IBCP_PACKAGE_VERSION latest
+# 程序包-下载目录
+ENV IBCP_PACKAGE_DOWNLOAD ~/ibcp_packages
+# ibcp配置目录
+ENV IBCP_CONF /srv/ibcp/conf
+# ibcp数据目录
+ENV IBCP_DATA /srv/ibcp/data
+# 其他使用的环境变量
+# CATALINA_HOME，tomcat目录
+
+# 创建数据文件夹
+RUN mkdir -p ${IBCP_PACKAGE_DOWNLOAD}
+RUN mkdir -p ${IBCP_CONF}
+RUN mkdir -p ${IBCP_DATA}
 
 # 部署ibcp程序
 RUN set -x \
 # 下载ibcp的最新war包
-    && wget -r -np -nd -P ~/ibcp_packages --http-user="${PACKAGE_USER}" --http-password="${PACKAGE_PASSWORD}" "${PACKAGE_URL}/${PACKAGE_VERSION}" \
+    && wget -r -np -nd -P ${IBCP_PACKAGE_DOWNLOAD} --http-user=${IBCP_PACKAGE_USER} --http-password=${IBCP_PACKAGE_PASSWORD} ${IBCP_PACKAGE_URL}/${IBCP_PACKAGE_VERSION} \
 # 释放war包
-    && (for file in `ls ~/ibcp_packages/ibcp.*.war`; \
+    && (for file in `ls ${IBCP_PACKAGE_DOWNLOAD}/ibcp.*.war`; \
        do \
 # 修正war包的解压目录
          folder=${file##*ibcp.}; \
@@ -38,15 +46,20 @@ RUN set -x \
          unzip -o $file -d "${CATALINA_HOME}/webapps/${folder}"; \
 # 删除配置文件，并映射到统一位置
          if [ -e "${CATALINA_HOME}/webapps/${folder}/WEB-INF/app.xml" ]; then \
-           if [ ! -e "/root/ibcp/conf/app.xml" ]; then cp -f "${CATALINA_HOME}/webapps/${folder}/WEB-INF/app.xml" "/root/ibcp/conf/app.xml"; fi; \
+           if [ ! -e "${IBCP_CONF}/app.xml" ]; then cp -f "${CATALINA_HOME}/webapps/${folder}/WEB-INF/app.xml" "${IBCP_CONF}/app.xml"; fi; \
            rm -f "${CATALINA_HOME}/webapps/${folder}/WEB-INF/app.xml"; \
-           ln -s /root/ibcp/conf/app.xml "${CATALINA_HOME}/webapps/${folder}/WEB-INF/app.xml"; \
+           ln -s "${IBCP_CONF}/app.xml" "${CATALINA_HOME}/webapps/${folder}/WEB-INF/app.xml"; \
          fi; \
 # 删除服务路由文件，并映射到统一位置
          if [ -e "${CATALINA_HOME}/webapps/${folder}/WEB-INF/service_routing.xml" ]; then \
-           if [ ! -e "/root/ibcp/conf/service_routing.xml" ]; then cp -f "${CATALINA_HOME}/webapps/${folder}/WEB-INF/service_routing.xml" "/root/ibcp/conf/service_routing.xml"; fi; \
+           if [ ! -e "${IBCP_CONF}/service_routing.xml" ]; then cp -f "${CATALINA_HOME}/webapps/${folder}/WEB-INF/service_routing.xml" "${IBCP_CONF}/service_routing.xml"; fi; \
            rm -f "${CATALINA_HOME}/webapps/${folder}/WEB-INF/service_routing.xml"; \
-           ln -s /root/ibcp/conf/service_routing.xml "${CATALINA_HOME}/webapps/${folder}/WEB-INF/service_routing.xml"; \
+           ln -s "${IBCP_CONF}/service_routing.xml" "${CATALINA_HOME}/webapps/${folder}/WEB-INF/service_routing.xml"; \
          fi; \
-
        done;) \
+
+# 映射ibcp数据目录
+VOLUME [${IBCP_CONF},${IBCP_DATA}]
+
+# 运行tomcat
+CMD ["catalina.sh", "run"]
