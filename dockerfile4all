@@ -8,7 +8,7 @@ MAINTAINER Niuren.Zhu "niuren.zhu@outlook.com"
 
 # 定义环境变量
 # 程序包-发布服务地址
-ENV IBCP_PACKAGE_URL http://ibas.club:8866/ibcp/
+ENV IBCP_PACKAGE_URL http://ibas.club:8866/ibcp
 # 程序包-发布服务用户名
 ENV IBCP_PACKAGE_USER avatech/\amber
 # 程序包-发布服务用户密码
@@ -32,9 +32,9 @@ RUN mkdir -p "${IBCP_DATA}"
 # 部署ibcp程序
 RUN set -x \
 # 下载ibcp的最新war包
-    && wget -r -np -nd -P ${IBCP_PACKAGE_DOWNLOAD} --http-user=${IBCP_PACKAGE_USER} --http-password=${IBCP_PACKAGE_PASSWORD} ${IBCP_PACKAGE_URL}/${IBCP_PACKAGE_VERSION} \
+    && wget -r -np -nd -P ${IBCP_PACKAGE_DOWNLOAD} --http-user=${IBCP_PACKAGE_USER} --http-password=${IBCP_PACKAGE_PASSWORD} ${IBCP_PACKAGE_URL}/${IBCP_PACKAGE_VERSION}/ \
 # 释放war包
-    && (for file in `ls "${IBCP_PACKAGE_DOWNLOAD}/ibcp.*.war"`; \
+    && (for file in `ls "${IBCP_PACKAGE_DOWNLOAD}" | grep .war`; \
        do \
 # 修正war包的解压目录
          folder=${file##*ibcp.}; \
@@ -56,7 +56,7 @@ RUN set -x \
            rm -f "${CATALINA_HOME}/webapps/${folder}/WEB-INF/service_routing.xml"; \
            ln -s "${IBCP_CONF}/service_routing.xml" "${CATALINA_HOME}/webapps/${folder}/WEB-INF/service_routing.xml"; \
          fi; \
-       done;) \
+       done;)
 
 # 映射ibcp数据目录
 VOLUME ["${IBCP_CONF}","${IBCP_DATA}"]
