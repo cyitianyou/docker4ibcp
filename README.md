@@ -4,9 +4,9 @@
 ### 鼓励师 | encourager
 [![encourager]](https://github.com/niurenzhu/docker4ibcp/blob/master/encourager.gif)  
 [encourager]:https://github.com/niurenzhu/docker4ibcp/blob/master/encourager.gif "unknown"
-* 姓名：不认识
+* 姓名：NA
 * 生日：NA
-* 国籍：韩国
+* 国籍：NA
 
 
 
