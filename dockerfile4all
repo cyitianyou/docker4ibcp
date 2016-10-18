@@ -8,19 +8,19 @@ MAINTAINER Niuren.Zhu "niuren.zhu@outlook.com"
 
 # 定义环境变量
 # 程序包-发布服务地址
-ENV IBCP_PACKAGE_URL http://ibas.club:8866/ibcp
+ENV IBCP_PACKAGE_URL=http://ibas.club:8866/ibcp \
 # 程序包-发布服务用户名
-ENV IBCP_PACKAGE_USER avatech/\amber
+    IBCP_PACKAGE_USER=avatech/\amber \
 # 程序包-发布服务用户密码
-ENV IBCP_PACKAGE_PASSWORD Aa123456
+    IBCP_PACKAGE_PASSWORD=Aa123456 \
 # 程序包-版本路径
-ENV IBCP_PACKAGE_VERSION latest
+    IBCP_PACKAGE_VERSION=latest \
 # 程序包-下载目录
-ENV IBCP_PACKAGE_DOWNLOAD ~/ibcp_packages
+    IBCP_PACKAGE_DOWNLOAD=~/ibcp_packages \
 # ibcp配置目录
-ENV IBCP_CONF /srv/ibcp/conf
+    IBCP_CONF=/srv/ibcp/conf \
 # ibcp数据目录
-ENV IBCP_DATA /srv/ibcp/data
+    IBCP_DATA=/srv/ibcp/data
 # 其他使用的环境变量
 # CATALINA_HOME，tomcat目录
 
