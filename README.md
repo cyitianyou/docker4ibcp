@@ -8,6 +8,10 @@
 * 生日：NA
 * 国籍：NA
 
+### 使用说明 | instructions
+#### 命令符调用
+构建ibcp容器镜像：
+* docker build --force-rm --rm --no-cache -f ./dockerfile4all -t ibcp-all:$(date +%s) ./
 
 
 ### 鸣谢 | thanks

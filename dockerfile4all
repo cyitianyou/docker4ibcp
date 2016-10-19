@@ -69,6 +69,10 @@ RUN set -x \
 # 删除下载的包
     && rm -rf "${IBCP_PACKAGE_DOWNLOAD}"
 
+# 拷贝配置文件
+COPY "ibcp.app.xml" "${IBCP_CONF}/app.xml"
+COPY "ibcp.service_routing.xml" "${IBCP_CONF}/service_routing.xml"
+
 # 映射ibcp数据目录
 VOLUME ["${IBCP_CONF}","${IBCP_DATA}"]
 
