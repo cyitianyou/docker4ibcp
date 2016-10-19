@@ -6,18 +6,17 @@ FROM tomcat:8.5.5-jre8
 # 作者
 MAINTAINER Niuren.Zhu "niuren.zhu@outlook.com"
 
-# 定义参数
-ARG \
+# 定义参数 
 # 程序包-发布服务地址
-    IBCP_PACKAGE_URL=http://ibas.club:8866/ibcp \
+ARG IBCP_PACKAGE_URL=http://ibas.club:8866/ibcp
 # 程序包-发布服务用户名
-    IBCP_PACKAGE_USER=avatech/\amber \
+ARG IBCP_PACKAGE_USER=avatech/\amber
 # 程序包-发布服务用户密码
-    IBCP_PACKAGE_PASSWORD=Aa123456 \
+ARG IBCP_PACKAGE_PASSWORD=Aa123456
 # 程序包-版本路径
-    IBCP_PACKAGE_VERSION=latest \
+ARG IBCP_PACKAGE_VERSION=latest
 # 程序包-下载目录
-    IBCP_PACKAGE_DOWNLOAD=~/ibcp_packages \
+ARG IBCP_PACKAGE_DOWNLOAD=~/ibcp_packages
 
 # 定义环境变量
 ENV \
@@ -33,7 +32,8 @@ ENV \
 # 创建数据文件夹
 RUN mkdir -p "${IBCP_PACKAGE_DOWNLOAD}"; \
     mkdir -p "${IBCP_CONF}"; \
-    mkdir -p "${IBCP_DATA}";
+    mkdir -p "${IBCP_DATA}"; \
+    mkdir -p "${IBCP_LOG}";
 
 # 部署ibcp程序
 RUN set -x \
@@ -63,8 +63,8 @@ RUN set -x \
            ln -s "${IBCP_CONF}/service_routing.xml" "${CATALINA_HOME}/webapps/${folder}/WEB-INF/service_routing.xml"; \
          fi; \
 # 映射日志文件夹到统一位置
-         if [ ! -e "${IBCP_LOG}" ]; then mkdir -p "${IBCP_LOG}"; fi; \
-         ln -s -d "${IBCP_LOG}" "${CATALINA_HOME}/webapps/${folder}/WEB-INF/log/"; \
+         if [ ! -e "${CATALINA_HOME}/webapps/${folder}/WEB-INF/log" ]; then mkdir -p "${CATALINA_HOME}/webapps/${folder}/WEB-INF/log"; fi; \
+         ln -s -d "${IBCP_LOG}" "${CATALINA_HOME}/webapps/${folder}/WEB-INF/log"; \
        done;) \
 # 删除下载的包
     && rm -rf "${IBCP_PACKAGE_DOWNLOAD}"
@@ -74,4 +74,4 @@ VOLUME ["${IBCP_CONF}","${IBCP_DATA}"]
 
 # 运行tomcat
 WORKDIR "$CATALINA_HOME"
-CMD ["catalina.sh", "run"]
+# CMD ["catalina.sh", "run"]
