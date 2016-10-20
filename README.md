@@ -9,9 +9,11 @@
 * 国籍：NA
 
 ### 使用说明 | instructions
-#### 命令符调用
-构建ibcp容器镜像：
-* docker build --force-rm --rm --no-cache -f ./dockerfile4all -t ibcp-all:$(date +%s) ./
+* build_dockerfile4all.sh      使用dockerfile4all创建容器镜像，且拷贝ibcp.app.xml，ibcp.service_routing.xml到容器的ibcp配置目录。
+* deploy_ibcp_all.sh           下载并部署ibcp全部模块。
+
+* 使用时注意提前修改配置文件内容。
+* 测试环境时，配置文件中涉及的主机，建议修改本机host文件指向。
 
 ### 鸣谢 | thanks
 [牛加人等于朱](http://baike.baidu.com/view/1769.htm "NiurenZhu")<br>
