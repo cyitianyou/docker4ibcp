@@ -11,7 +11,7 @@
     <!-- 配置项目-数据库名称 -->
     <add key="MasterDbName" value="ibcp_demo" />
     <!-- 配置项目-数据库用户名称 -->
-    <add key="MasterDbUserID" value="sa" />
+    <add key="MasterDbUserID" value="root" />
     <!-- 配置项目-数据库用户密码 -->
     <add key="MasterDbUserPassword" value="1q2w3e" />
     <!-- 配置项目-审批方法 -->
