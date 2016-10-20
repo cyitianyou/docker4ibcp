@@ -13,7 +13,6 @@
 构建ibcp容器镜像：
 * docker build --force-rm --rm --no-cache -f ./dockerfile4all -t ibcp-all:$(date +%s) ./
 
-
 ### 鸣谢 | thanks
 [牛加人等于朱](http://baike.baidu.com/view/1769.htm "NiurenZhu")<br>
 [Color-Coding](http://colorcoding.org/ "咔啦工作室")<br>

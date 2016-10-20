@@ -1,5 +1,7 @@
 .git
 .vs
+tmp
+temp
 LICENSE
 README.md
 encourager.gif
