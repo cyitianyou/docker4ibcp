@@ -1,10 +1,10 @@
 # ibcp全模块镜像
 # 基于tomcat镜像的ibcp镜像
 # OS：debian:jessie
-FROM tomcat:8.5.5-jre8
+FROM tomcat:8.5-jre8
 
 # 作者
-MAINTAINER Niuren.Zhu "niuren.zhu@outlook.com"
+MAINTAINER Niuren.Zhu "niuren.zhu@icloud.com"
 
 # 定义参数 
 # 程序包-发布服务地址
@@ -63,8 +63,8 @@ RUN set -x \
            ln -s "${IBCP_CONF}/service_routing.xml" "${CATALINA_HOME}/webapps/${folder}/WEB-INF/service_routing.xml"; \
          fi; \
 # 映射日志文件夹到统一位置
-         if [ ! -e "${CATALINA_HOME}/webapps/${folder}/WEB-INF/log" ]; then mkdir -p "${CATALINA_HOME}/webapps/${folder}/WEB-INF/log"; fi; \
-         ln -s -d "${IBCP_LOG}" "${CATALINA_HOME}/webapps/${folder}/WEB-INF/log"; \
+         if [ -e "${CATALINA_HOME}/webapps/${folder}/WEB-INF/log" ]; then rm -rf "${CATALINA_HOME}/webapps/${folder}/WEB-INF/log"; fi; \
+         ln -s -d "${IBCP_LOG}" "${CATALINA_HOME}/webapps/${folder}/WEB-INF"; \
        done;) \
 # 删除下载的包
     && rm -rf "${IBCP_PACKAGE_DOWNLOAD}"
