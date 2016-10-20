@@ -33,7 +33,8 @@ ENV \
 RUN mkdir -p "${IBCP_PACKAGE_DOWNLOAD}"; \
     mkdir -p "${IBCP_CONF}"; \
     mkdir -p "${IBCP_DATA}"; \
-    mkdir -p "${IBCP_LOG}";
+    mkdir -p "${IBCP_LOG}"; \
+    mkdir -p "${CATALINA_HOME}/webapps";
 
 # 部署ibcp程序
 RUN set -x \
@@ -46,9 +47,8 @@ RUN set -x \
          folder=${file##*ibcp.}; \
          folder=${folder%%.service*}; \
 # 记录释放的目录到ibcp.release
-         if [ ! -e "${CATALINA_HOME}/webapps/ibcp.release" ]; then echo >>"${CATALINA_HOME}/webapps/ibcp.release"; fi; \
-         grep -q "${folder}" "${DEPLOY_FOLDER}/webapps/ibcp.release >/dev/null; \
-         if [ $? -nq 0 ];then echo "${folder}" >>"${CATALINA_HOME}/webapps/ibcp.release"; fi; \
+         if [ ! -e "${CATALINA_HOME}/webapps/ibcp.release" ]; then :>"${CATALINA_HOME}/webapps/ibcp.release"; fi; \
+         grep -q ${folder} "${DEPLOY_FOLDER}/webapps/ibcp.release" || echo ${folder} >>"${CATALINA_HOME}/webapps/ibcp.release"; \
 # 解压war包到tomcat目录
          unzip -o "${IBCP_PACKAGE_DOWNLOAD}/${file}" -d "${CATALINA_HOME}/webapps/${folder}"; \
 # 删除配置文件，并映射到统一位置

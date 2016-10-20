@@ -40,6 +40,7 @@ mkdir -p "${IBCP_PACKAGE_DOWNLOAD}"
 mkdir -p "${IBCP_CONF}"
 mkdir -p "${IBCP_DATA}"
 mkdir -p "${IBCP_LOG}"
+mkdir -p "${DEPLOY_FOLDER}/webapps"
 
 # 下载ibcp
 echo 开始下载模块，从${IBCP_PACKAGE_URL}/${IBCP_PACKAGE_VERSION}/
@@ -52,9 +53,8 @@ for file in `ls "${IBCP_PACKAGE_DOWNLOAD}" | grep .war`
     folder=${file##*ibcp.}
     folder=${folder%%.service*}
 # 记录释放的目录到ibcp.release
-    if [ ! -e "${DEPLOY_FOLDER}/webapps/ibcp.release" ]; then echo >>"${DEPLOY_FOLDER}/webapps/ibcp.release"; fi
-    grep -q "${folder}" "${DEPLOY_FOLDER}/webapps/ibcp.release >/dev/null
-    if [ $? -nq 0 ];then echo "${folder}" >>"${DEPLOY_FOLDER}/webapps/ibcp.release"; fi;
+    if [ ! -e "${DEPLOY_FOLDER}/webapps/ibcp.release" ]; then :>"${DEPLOY_FOLDER}/webapps/ibcp.release"; fi;
+    grep -q ${folder} "${DEPLOY_FOLDER}/webapps/ibcp.release" || echo "${folder}" >>"${DEPLOY_FOLDER}/webapps/ibcp.release"
 # 解压war包到目录
     unzip -o "${IBCP_PACKAGE_DOWNLOAD}/${file}" -d "${DEPLOY_FOLDER}/webapps/${folder}"
 # 删除配置文件，并映射到统一位置
