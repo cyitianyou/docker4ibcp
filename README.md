@@ -9,8 +9,9 @@
 * 国籍：NA
 
 ### 使用说明 | instructions
-* build_dockerfile4all.sh      使用dockerfile4all创建容器镜像，且拷贝ibcp.app.xml，ibcp.service_routing.xml到容器的ibcp配置目录。
-* deploy_ibcp_all.sh           下载并部署ibcp全部模块。
+* build_dockerfile4all.sh            使用dockerfile4all创建容器镜像，且拷贝ibcp.app.xml，ibcp.service_routing.xml到容器的ibcp配置目录。
+* deploy_ibcp_all.sh                 下载并部署ibcp全部模块。
+* initialize_datastructures.sh       初始化数据结构。
 * 使用时注意提前修改配置文件内容。
 * 测试环境时，配置文件中涉及的主机，建议修改本机host文件指向。
 

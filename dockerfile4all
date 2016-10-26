@@ -77,7 +77,8 @@ RUN set -x \
 COPY "ibcp.app.xml" "${IBCP_CONF}/app.xml"
 COPY "ibcp.service_routing.xml" "${IBCP_CONF}/service_routing.xml"
 # 拷贝工具文件
-ADD "btulz.transforms.zip" "${IBCP_PACKAGE_TOOLS}"
+COPY "initialize_datastructures.sh" "${IBCP_PACKAGE_TOOLS}/"
+ADD "btulz.transforms.tar" "${IBCP_PACKAGE_TOOLS}/"
 
 # 映射ibcp数据目录
 VOLUME ["${IBCP_CONF}","${IBCP_DATA}"]
