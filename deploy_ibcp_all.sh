@@ -4,20 +4,20 @@ echo '         deploy_ibcp_all.sh                                               
 echo '                      by niuren.zhu                                         '
 echo '                           2016.10.20                                       '
 echo '  说明：                                                                    '
-echo '    1. 下载ibcp所有模块并解压，默认从ibas.club:8866下载。                      '
-echo '    2. 参数1，部署目录，如：tomcat根目录，所有模块释放到部署目录/webapps/。      '
-echo '    3. 参数2，数据目录，各个模块数据及配置文件集中映射到此目录。                 '
-echo '    4. 脚本用到unzip命令，请提前安装。                                        '
-echo '    5. /ibcp_packages为下载模块目录，请手工清除。                             '
-echo '    6. /webapps/ibcp.release记录所以释放的文件夹名称。                        '
+echo '    1. 下载ibcp所有模块并解压，默认从ibas.club:8866下载。                   '
+echo '    2. 参数1，部署目录，如：tomcat根目录，所有模块释放到部署目录/webapps/。 '
+echo '    3. 参数2，数据目录，各个模块数据及配置文件集中映射到此目录。            '
+echo '    4. 脚本用到unzip命令，请提前安装。                                      '
+echo '    5. /ibcp_packages为下载模块目录，请手工清除。                           '
+echo '    6. /webapps/ibcp.release记录所以释放的文件夹名称。                      '
 echo '****************************************************************************'
 # 定义变量
 # 释放的目录
 DEPLOY_FOLDER=$1
-if [ "${DEPLOY_FOLDER}"=="" ];then DEPLOY_FOLDER=$PWD; fi;
+if [ "${DEPLOY_FOLDER}" == "" ];then DEPLOY_FOLDER=$PWD; fi;
 # ibcp工作目录
 IBCP_WORK_FOLDER=$2
-if [ "${IBCP_WORK_FOLDER}"=="" ];then IBCP_WORK_FOLDER=$PWD; fi;
+if [ "${IBCP_WORK_FOLDER}" == "" ];then IBCP_WORK_FOLDER=$PWD; fi;
 # 程序包-发布服务地址
 IBCP_PACKAGE_URL=http://ibas.club:8866/ibcp
 # 程序包-发布服务用户名

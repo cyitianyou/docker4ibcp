@@ -16,7 +16,9 @@ ARG IBCP_PACKAGE_PASSWORD=Aa123456
 # 程序包-版本路径
 ARG IBCP_PACKAGE_VERSION=latest
 # 程序包-下载目录
-ARG IBCP_PACKAGE_DOWNLOAD=~/ibcp_packages
+ARG IBCP_PACKAGE_DOWNLOAD=./ibcp_packages
+# 程序包-工具目录
+ARG IBCP_PACKAGE_TOOLS=./ibcp_tools
 
 # 定义环境变量
 ENV \
@@ -31,6 +33,7 @@ ENV \
 
 # 创建数据文件夹
 RUN mkdir -p "${IBCP_PACKAGE_DOWNLOAD}"; \
+    mkdir -p "${IBCP_PACKAGE_TOOLS}"; \
     mkdir -p "${IBCP_CONF}"; \
     mkdir -p "${IBCP_DATA}"; \
     mkdir -p "${IBCP_LOG}"; \
@@ -73,6 +76,8 @@ RUN set -x \
 # 拷贝配置文件
 COPY "ibcp.app.xml" "${IBCP_CONF}/app.xml"
 COPY "ibcp.service_routing.xml" "${IBCP_CONF}/service_routing.xml"
+# 拷贝工具文件
+ADD "btulz.transforms.zip" "${IBCP_PACKAGE_TOOLS}"
 
 # 映射ibcp数据目录
 VOLUME ["${IBCP_CONF}","${IBCP_DATA}"]
