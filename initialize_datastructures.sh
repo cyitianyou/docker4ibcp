@@ -8,12 +8,23 @@ echo '  1. 遍历目录WEB_INF/lib/ibcp.*.jar包，通过btulz创建数据结构
 echo '  2. 数据库的配置信息读自各个模块的app.xml。                '
 echo '  3. 参数1，工作目录，如：tomcat/webapps/。                 '
 echo '****************************************************************************'
+# 检查JAVA运行环境
+if [ ! -e "${JAVA_HOME}/bin/java" ];then
+  echo not found java.
+  exit 1
+fi;
 # 定义变量
 # ibcp释放目录
 DEPLOY_FOLDER=$1
-# ibcp工具目录
-TOOLS_FOLDER=${DEPLOY_FOLDER}/ibcp_tools
-TOOLS_TRANSFORM=${TOOLS_FOLDER}/btulz.transforms/btulz.transforms.core-0.1.0.jar
+# ibcp工具目录,脚本所在目录
+TOOLS_FOLDER=$(echo `dirname $0`)
+TOOLS_TRANSFORM=${TOOLS_FOLDER}/btulz.transforms.core-0.1.0.jar
+# 判断工具是否存在
+if [ ! -e "${TOOLS_TRANSFORM}" ];then
+  echo not found btulz.transforms, in [${TOOLS_TRANSFORM}].
+  exit 1
+fi;
+
 # 数据库信息
 CompanyId=CC
 MasterDbType=
@@ -94,11 +105,12 @@ do
        if [ -e "${FILE_APP}" ]; then
          getConfigValue ${FILE_APP};
        fi;
-       if [ -e ${TOOLS_TRANSFORM} ];then
+       if [ -e "${DEPLOY_FOLDER}/${folder}/WEB-INF/lib/${file}" ];then
 # 工具存在，创建数据结构
-         java -Djava.ext.dirs=./lib -jar dsJar \
+         java -Djava.ext.dirs=${TOOLS_FOLDER}/lib -jar \
+              ${TOOLS_TRANSFORM} dsJar \
               -DsTemplate=ds_${MasterDbType}_ibas_classic.xml \
-              -JarFile="${DEPLOY_FOLDER}/${folder}/WEB-INF/lib/${file}" \
+              -JarFile=${DEPLOY_FOLDER}/${folder}/WEB-INF/lib/${file} \
               -SqlFilter=sql_${MasterDbType} \
               -Company=${CompanyId} \
               -DbServer=${MasterDbServer} \
@@ -106,13 +118,14 @@ do
               -DbSchema=${MasterDbSchema} \
               -DbName=${MasterDbName} \
               -DbUser=${MasterDbUserID} \
-              -DbPassword=${MasterDbUserPassword}
+              -DbPassword=${MasterDbUserPassword};
        else
 # 工具不存在，显示执行命令
          echo btulz.transforms not exists, please execute the command manually.
-         echo "java -Djava.ext.dirs=./lib -jar dsJar
+         echo "java -Djava.ext.dirs=${TOOLS_FOLDER}/lib -jar 
+              ${TOOLS_TRANSFORM} dsJar
               -DsTemplate=ds_${MasterDbType}_ibas_classic.xml
-              -JarFile="${DEPLOY_FOLDER}/${folder}/WEB-INF/lib/${file}"
+              -JarFile=${DEPLOY_FOLDER}/${folder}/WEB-INF/lib/${file}
               -SqlFilter=sql_${MasterDbType}
               -Company=${CompanyId}
               -DbServer=${MasterDbServer}

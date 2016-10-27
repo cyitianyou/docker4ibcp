@@ -79,6 +79,8 @@ COPY "ibcp.service_routing.xml" "${IBCP_CONF}/service_routing.xml"
 # 拷贝工具文件
 COPY "initialize_datastructures.sh" "${IBCP_PACKAGE_TOOLS}/"
 ADD "btulz.transforms.tar" "${IBCP_PACKAGE_TOOLS}/"
+# 修改脚本权限
+RUN chmod 775 "${IBCP_PACKAGE_TOOLS}/initialize_datastructures.sh"
 
 # 映射ibcp数据目录
 VOLUME ["${IBCP_CONF}","${IBCP_DATA}"]
