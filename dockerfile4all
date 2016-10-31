@@ -49,7 +49,7 @@ RUN set -x \
 # 修正war包的解压目录
          folder=${file##*ibcp.}; \
          folder=${folder%%.service*}; \
-         folder=${folder}|sed 'N;s/\n//g'; \
+         folder=${folder} | sed 'N;s/\n//g'; \
 # 记录释放的目录到ibcp.release，默认systemcenter第一个
          if [ ! -e "${CATALINA_HOME}/webapps/ibcp.release" ]; then echo "systemcenter" >"${CATALINA_HOME}/webapps/ibcp.release"; fi; \
          grep -q ${folder} "${DEPLOY_FOLDER}/webapps/ibcp.release" || echo "${folder}" >>"${CATALINA_HOME}/webapps/ibcp.release"; \
