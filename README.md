@@ -16,8 +16,9 @@
 * 测试环境时，配置文件中涉及的主机，建议修改本机host文件指向。
 
 ### 启动 | running
-* docker run --name ibcp-srv-db -p 3306:3306 -d -e MYSQL_ROOT_PASSWORD=1q2w3e mysql:5.7
-* docker run --name=ibcp-srv-app-01 --link=ibcp-srv-db -p 8080:8080 -d ibcp-all:1476945979
+* docker run --name ibcp-srv-db -p 3306:3306 -d -e MYSQL_ROOT_PASSWORD=1q2w3e mysql:5.7          启动MYSQL容器
+* docker run --name=ibcp-srv-app-01 --link=ibcp-srv-db -p 8080:8080 -d ibcp-all:1476945979       启动ibcp容器
+* docker exec -it ibcp-srv-app-01 ./ibcp_tools/initialize_datastructures.sh                      执行ibcp容器中数据结构
 
 * 修改访问主机host：192.168.3.60    ibcp-srv-app
 
