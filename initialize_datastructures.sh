@@ -105,9 +105,7 @@ do
        if [ -e "${FILE_APP}" ]; then
          getConfigValue ${FILE_APP};
        fi;
-       if [ -e "${DEPLOY_FOLDER}/${folder}/WEB-INF/lib/${file}" ];then
-# 工具存在，创建数据结构
-         java -Djava.ext.dirs=${TOOLS_FOLDER}/lib -jar \
+       COMMOND="java -Djava.ext.dirs=${TOOLS_FOLDER}/lib -jar \
               ${TOOLS_TRANSFORM} dsJar \
               -DsTemplate=ds_${MasterDbType}_ibas_classic.xml \
               -JarFile=${DEPLOY_FOLDER}/${folder}/WEB-INF/lib/${file} \
@@ -118,23 +116,9 @@ do
               -DbSchema=${MasterDbSchema} \
               -DbName=${MasterDbName} \
               -DbUser=${MasterDbUserID} \
-              -DbPassword=${MasterDbUserPassword};
-       else
-# 工具不存在，显示执行命令
-         echo btulz.transforms not exists, please execute the command manually.
-         echo "java -Djava.ext.dirs=${TOOLS_FOLDER}/lib -jar 
-              ${TOOLS_TRANSFORM} dsJar
-              -DsTemplate=ds_${MasterDbType}_ibas_classic.xml
-              -JarFile=${DEPLOY_FOLDER}/${folder}/WEB-INF/lib/${file}
-              -SqlFilter=sql_${MasterDbType}
-              -Company=${CompanyId}
-              -DbServer=${MasterDbServer}
-              -DbPort=${MasterDbPort}
-              -DbSchema=${MasterDbSchema}
-              -DbName=${MasterDbName}
-              -DbUser=${MasterDbUserID}
-              -DbPassword=${MasterDbUserPassword}"
-       fi;
+              -DbPassword=${MasterDbUserPassword};"
+         echo exec: ${COMMOND}
+         eval $(echo ${COMMOND})       
        echo ----
     done
     echo --

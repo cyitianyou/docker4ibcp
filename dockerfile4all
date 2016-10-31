@@ -49,9 +49,9 @@ RUN set -x \
 # 修正war包的解压目录
          folder=${file##*ibcp.}; \
          folder=${folder%%.service*}; \
-# 记录释放的目录到ibcp.release
-         if [ ! -e "${CATALINA_HOME}/webapps/ibcp.release" ]; then :>"${CATALINA_HOME}/webapps/ibcp.release"; fi; \
-         grep -q ${folder} "${DEPLOY_FOLDER}/webapps/ibcp.release" || echo ${folder} >>"${CATALINA_HOME}/webapps/ibcp.release"; \
+# 记录释放的目录到ibcp.release，默认systemcenter第一个
+         if [ ! -e "${CATALINA_HOME}/webapps/ibcp.release" ]; then echo "systemcenter" >"${CATALINA_HOME}/webapps/ibcp.release"; fi; \
+         grep -q ${folder} "${DEPLOY_FOLDER}/webapps/ibcp.release" || echo "${folder}" >>"${CATALINA_HOME}/webapps/ibcp.release"; \
 # 解压war包到tomcat目录
          unzip -o "${IBCP_PACKAGE_DOWNLOAD}/${file}" -d "${CATALINA_HOME}/webapps/${folder}"; \
 # 删除配置文件，并映射到统一位置
