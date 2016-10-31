@@ -54,7 +54,7 @@ for file in `ls "${IBCP_PACKAGE_DOWNLOAD}" | grep .war`
     folder=${folder%%.service*}
     folder=${folder}|sed 'N;s/\n//g'
 # 记录释放的目录到ibcp.release
-    if [ ! -e "${DEPLOY_FOLDER}/webapps/ibcp.release" ]; then echo -e "systemcenter" >"${DEPLOY_FOLDER}/webapps/ibcp.release"; fi;
+    if [ ! -e "${DEPLOY_FOLDER}/webapps/ibcp.release" ]; then echo "systemcenter" >"${DEPLOY_FOLDER}/webapps/ibcp.release"; fi;
     grep -q ${folder} "${DEPLOY_FOLDER}/webapps/ibcp.release" || echo "${folder}" >>"${DEPLOY_FOLDER}/webapps/ibcp.release"
 # 解压war包到目录
     unzip -o "${IBCP_PACKAGE_DOWNLOAD}/${file}" -d "${DEPLOY_FOLDER}/webapps/${folder}"
