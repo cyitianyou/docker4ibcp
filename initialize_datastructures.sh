@@ -90,9 +90,9 @@ if [ "${DEPLOY_FOLDER}" == "" ];then DEPLOY_FOLDER=$PWD; fi;
 
 echo 开始分析${DEPLOY_FOLDER}目录下数据
 # 检查是否存在模块说明文件
-if [ ! -e "${DEPLOY_FOLDER}/ibcp.release" ]
+if [ ! -e "${DEPLOY_FOLDER}/ibcp.release.txt" ]
 then
-  ls -l "${DEPLOY_FOLDER}" | awk '/^d/{print $NF}' > "${DEPLOY_FOLDER}/ibcp.release"
+  ls -l "${DEPLOY_FOLDER}" | awk '/^d/{print $NF}' > "${DEPLOY_FOLDER}/ibcp.release.txt"
 fi
 while read folder
 do
@@ -122,5 +122,5 @@ do
        echo ----
     done
     echo --
-  done < "${DEPLOY_FOLDER}/ibcp.release" | sed 's/\r//g'
+  done < "${DEPLOY_FOLDER}/ibcp.release.txt" | sed 's/\r//g'
 echo 操作完成

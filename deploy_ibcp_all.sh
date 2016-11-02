@@ -45,17 +45,21 @@ mkdir -p "${DEPLOY_FOLDER}/webapps"
 # 下载ibcp
 echo 开始下载模块，从${IBCP_PACKAGE_URL}/${IBCP_PACKAGE_VERSION}/
 wget -r -np -nd -nv -P ${IBCP_PACKAGE_DOWNLOAD} --http-user=${IBCP_PACKAGE_USER} --http-password=${IBCP_PACKAGE_PASSWORD} ${IBCP_PACKAGE_URL}/${IBCP_PACKAGE_VERSION}/
+# 排序
+if [ ! -e "${IBCP_PACKAGE_DOWNLOAD}/ibcp.deploy.order.txt" ]; then
+    ls -l "${IBCP_PACKAGE_DOWNLOAD}/*.war" | awk '//{print $NF}' >>"${IBCP_PACKAGE_DOWNLOAD}/ibcp.deploy.order.txt";
+fi;
 echo 开始解压模块，到目录${CATALINA_HOME}
-for file in `ls "${IBCP_PACKAGE_DOWNLOAD}" | grep .war`
+while read file
   do
-    echo 释放${file}
+    file=${file%%.war*}.war
+    echo 释放"${IBCP_PACKAGE_DOWNLOAD}/${file}"
 # 修正war包的解压目录
     folder=${file##*ibcp.}
     folder=${folder%%.service*}
-    folder=${folder}|sed 'N;s/\n//g'
-# 记录释放的目录到ibcp.release
-    if [ ! -e "${DEPLOY_FOLDER}/webapps/ibcp.release" ]; then echo "systemcenter" >"${DEPLOY_FOLDER}/webapps/ibcp.release"; fi;
-    grep -q ${folder} "${DEPLOY_FOLDER}/webapps/ibcp.release" || echo "${folder}" >>"${DEPLOY_FOLDER}/webapps/ibcp.release"
+# 记录释放的目录到ibcp.release.txt
+    if [ ! -e "${DEPLOY_FOLDER}/webapps/ibcp.release.txt" ]; then :>"${DEPLOY_FOLDER}/webapps/ibcp.release.txt"; fi;
+    grep -q ${folder} "${DEPLOY_FOLDER}/webapps/ibcp.release.txt" || echo "${folder}" >>"${DEPLOY_FOLDER}/webapps/ibcp.release.txt"
 # 解压war包到目录
     unzip -o "${IBCP_PACKAGE_DOWNLOAD}/${file}" -d "${DEPLOY_FOLDER}/webapps/${folder}"
 # 删除配置文件，并映射到统一位置
@@ -73,5 +77,5 @@ for file in `ls "${IBCP_PACKAGE_DOWNLOAD}" | grep .war`
 # 映射日志文件夹到统一位置
     if [ -e "${DEPLOY_FOLDER}/webapps/${folder}/WEB-INF/log" ]; then rm -rf "${DEPLOY_FOLDER}/webapps/${folder}/WEB-INF/log"; fi;
     ln -s -d "${IBCP_LOG}" "${DEPLOY_FOLDER}/webapps/${folder}/WEB-INF/"
-  done
+  done < "${IBCP_PACKAGE_DOWNLOAD}/ibcp.deploy.order.txt" | sed 's/\r//g';
 echo 操作完成
