@@ -46,15 +46,15 @@ RUN set -x \
 # 排序
     && if [ ! -e "${IBCP_PACKAGE_DOWNLOAD}/ibcp.deploy.order.txt" ]; then \
           ls -l "${IBCP_PACKAGE_DOWNLOAD}/*.war" | awk '//{print $NF}' >>"${IBCP_PACKAGE_DOWNLOAD}/ibcp.deploy.order.txt"; \
-       fi; \
+       fi \
 # 释放war包
-    && while read file \
+    && (while read file; \
        do \
-         file=${file%%.war*}.war \
-         echo 释放"${IBCP_PACKAGE_DOWNLOAD}/${file}" \
+         file=${file%%.war*}.war; \
+         echo 释放"${IBCP_PACKAGE_DOWNLOAD}/${file}"; \
 # 修正war包的解压目录
-         folder=${file##*ibcp.} \
-         folder=${folder%%.service*} \
+         folder=${file##*ibcp.}; \
+         folder=${folder%%.service*}; \
 # 记录释放的目录到ibcp.release.txt
          if [ ! -e "${CATALINA_HOME}/webapps/ibcp.release.txt" ]; then :>"${CATALINA_HOME}/webapps/ibcp.release.txt"; fi; \
          grep -q ${folder} "${DEPLOY_FOLDER}/webapps/ibcp.release.txt" || echo "${folder}" >>"${CATALINA_HOME}/webapps/ibcp.release.txt"; \
@@ -75,7 +75,7 @@ RUN set -x \
 # 映射日志文件夹到统一位置
          if [ -e "${CATALINA_HOME}/webapps/${folder}/WEB-INF/log" ]; then rm -rf "${CATALINA_HOME}/webapps/${folder}/WEB-INF/log"; fi; \
          ln -s -d "${IBCP_LOG}" "${CATALINA_HOME}/webapps/${folder}/WEB-INF/"; \
-       done < "${IBCP_PACKAGE_DOWNLOAD}/ibcp.deploy.order.txt" | sed 's/\r//g'; \
+       done < "${IBCP_PACKAGE_DOWNLOAD}/ibcp.deploy.order.txt" | sed 's/\r//g';) \
 # 删除下载的包
     && rm -rf "${IBCP_PACKAGE_DOWNLOAD}"
 
