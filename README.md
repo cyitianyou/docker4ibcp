@@ -14,6 +14,7 @@
 * initialize_datastructures.sh       初始化数据结构。
 * 使用时注意提前修改配置文件内容。
 * 测试环境时，配置文件中涉及的主机，建议修改本机host文件指向。
+* 脚本中使用了额外文件作为初始化顺序说明。
 
 ### 启动 | running
 * docker run --name ibcp-srv-db -p 3306:3306 -d -e MYSQL_ROOT_PASSWORD=1q2w3e mysql:5.7          启动MYSQL容器

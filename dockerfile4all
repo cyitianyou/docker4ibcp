@@ -43,7 +43,7 @@ RUN mkdir -p "${IBCP_PACKAGE_DOWNLOAD}"; \
 RUN set -x \
 # 下载ibcp的最新war包
     && wget -r -np -nd -nv -P ${IBCP_PACKAGE_DOWNLOAD} --http-user=${IBCP_PACKAGE_USER} --http-password=${IBCP_PACKAGE_PASSWORD} ${IBCP_PACKAGE_URL}/${IBCP_PACKAGE_VERSION}/ \
-# 排序
+# 排序ibcp.deploy.order.txt，此文件为部署顺序说明。
     && if [ ! -e "${IBCP_PACKAGE_DOWNLOAD}/ibcp.deploy.order.txt" ]; then \
           ls -l "${IBCP_PACKAGE_DOWNLOAD}/*.war" | awk '//{print $NF}' >>"${IBCP_PACKAGE_DOWNLOAD}/ibcp.deploy.order.txt"; \
        fi \

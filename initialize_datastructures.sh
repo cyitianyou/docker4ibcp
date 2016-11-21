@@ -89,7 +89,7 @@ fi;
 if [ "${DEPLOY_FOLDER}" == "" ];then DEPLOY_FOLDER=$PWD; fi;
 
 echo 开始分析${DEPLOY_FOLDER}目录下数据
-# 检查是否存在模块说明文件
+# 检查是否存在模块说明文件，此文件描述模块初始化顺序。
 if [ ! -e "${DEPLOY_FOLDER}/ibcp.release.txt" ]
 then
   ls -l "${DEPLOY_FOLDER}" | awk '/^d/{print $NF}' > "${DEPLOY_FOLDER}/ibcp.release.txt"
