@@ -77,5 +77,13 @@ while read file
 # 映射日志文件夹到统一位置
     if [ -e "${DEPLOY_FOLDER}/webapps/${folder}/WEB-INF/log" ]; then rm -rf "${DEPLOY_FOLDER}/webapps/${folder}/WEB-INF/log"; fi;
     ln -s -d "${IBCP_LOG}" "${DEPLOY_FOLDER}/webapps/${folder}/WEB-INF/"
+# 集中共享jar包
+    if [ -e "${DEPLOY_FOLDER}/lib/" ]
+    then
+# 复制模块jar包到tomcat的lib目录
+      cp -n "${DEPLOY_FOLDER}/webapps/${folder}/WEB-INF/lib/"*.jar "${DEPLOY_FOLDER}/lib/";
+# 清除tomcat的lib已经存在的jar包
+      rm -f "${DEPLOY_FOLDER}/webapps/${folder}/WEB-INF/lib/"*.jar;
+    fi;
   done < "${IBCP_PACKAGE_DOWNLOAD}/ibcp.deploy.order.txt" | sed 's/\r//g';
 echo 操作完成
