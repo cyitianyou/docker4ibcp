@@ -22,12 +22,14 @@ ARG IBCP_PACKAGE_TOOLS=./ibcp_tools
 
 # 定义环境变量
 ENV \
+# ibcp目录
+    IBCP_HOME=/srv/ibcp \
 # ibcp配置目录
-    IBCP_CONF=/srv/ibcp/conf \
+    IBCP_CONF=${IBCP_HOME}/conf \
 # ibcp数据目录
-    IBCP_DATA=/srv/ibcp/data \
+    IBCP_DATA=${IBCP_HOME}/data \
 # ibcp日志目录
-    IBCP_LOG=/srv/ibcp/log
+    IBCP_LOG=${IBCP_HOME}/log
 # 其他使用的环境变量
 # CATALINA_HOME，tomcat目录
 
@@ -58,7 +60,8 @@ RUN set -x \
 # 记录释放的目录到ibcp.release.txt
          if [ ! -e "${CATALINA_HOME}/webapps/ibcp.release.txt" ]; then :>"${CATALINA_HOME}/webapps/ibcp.release.txt"; fi; \
          grep -q ${folder} "${DEPLOY_FOLDER}/webapps/ibcp.release.txt" || echo "${folder}" >>"${CATALINA_HOME}/webapps/ibcp.release.txt"; \
-# 解压war包到tomcat目录
+# 解压war包到tomcat目录，WEB-INF*表示仅解压此目录
+#        unzip -o "${IBCP_PACKAGE_DOWNLOAD}/${file}" WEB-INF* -d "${CATALINA_HOME}/webapps/${folder}"; \
          unzip -o "${IBCP_PACKAGE_DOWNLOAD}/${file}" -d "${CATALINA_HOME}/webapps/${folder}"; \
 # 删除配置文件，并映射到统一位置
          if [ -e "${CATALINA_HOME}/webapps/${folder}/WEB-INF/app.xml" ]; then \
@@ -75,6 +78,13 @@ RUN set -x \
 # 映射日志文件夹到统一位置
          if [ -e "${CATALINA_HOME}/webapps/${folder}/WEB-INF/log" ]; then rm -rf "${CATALINA_HOME}/webapps/${folder}/WEB-INF/log"; fi; \
          ln -s -d "${IBCP_LOG}" "${CATALINA_HOME}/webapps/${folder}/WEB-INF/"; \
+# 集中共享jar包
+         if [ -e "${CATALINA_HOME}/lib/" ]; then \
+# 复制模块jar包到tomcat的lib目录
+           cp -n "${CATALINA_HOME}/webapps/${folder}/WEB-INF/lib/"*.jar "${CATALINA_HOME}/lib/"; \
+# 清除tomcat的lib已经存在的jar包
+           rm -f "${CATALINA_HOME}/webapps/${folder}/WEB-INF/lib/"*.jar; \
+         fi; \
        done < "${IBCP_PACKAGE_DOWNLOAD}/ibcp.deploy.order.txt" | sed 's/\r//g';) \
 # 删除下载的包
     && rm -rf "${IBCP_PACKAGE_DOWNLOAD}"
@@ -89,8 +99,8 @@ ADD "btulz.transforms.tar" "${IBCP_PACKAGE_TOOLS}/"
 RUN chmod 775 "${IBCP_PACKAGE_TOOLS}/initialize_datastructures.sh"
 
 # 映射ibcp数据目录
-VOLUME ["${IBCP_CONF}","${IBCP_DATA}"]
+VOLUME ["${IBCP_HOME}"]
 
 # 运行tomcat
-WORKDIR "$CATALINA_HOME"
+WORKDIR "${CATALINA_HOME}"
 # CMD ["catalina.sh", "run"]

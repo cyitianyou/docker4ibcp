@@ -35,7 +35,7 @@ MasterDbName=
 MasterDbUserID=
 MasterDbUserPassword=
 # 获取属性值
-function attrget()  
+function getAttr()  
 {  
    ATTR_PAIR=${1#*$2=\"}  
    echo "${ATTR_PAIR%%\"*}"  
@@ -52,8 +52,8 @@ function getConfigValue()
        ATTRIBUTES=${ENTITY#* }
        if [[ $TAG_NAME == "add" ]]
          then
-           key=`attrget ${ATTRIBUTES} "key"`
-           value=`attrget ${ATTRIBUTES} "value"`
+           key=`getAttr ${ATTRIBUTES} "key"`
+           value=`getAttr ${ATTRIBUTES} "value"`
            # echo $key=$value
            eval "${key}='${value}'"
         fi
@@ -80,7 +80,27 @@ function getConfigValue()
   if [ "${MasterDbType}" == "hana" ];then
     if [ "${MasterDbPort}" == "" ];then MasterDbPort=30015; fi;
   fi;
- }
+}
+# 创建数据结构
+function createDS()  
+{
+# 参数1，使用的jar包
+  JarFile=$1;
+  COMMOND="java -Djava.ext.dirs=${TOOLS_FOLDER}/lib -jar \
+    ${TOOLS_TRANSFORM} dsJar \
+    -DsTemplate=ds_${MasterDbType}_ibas_classic.xml \
+    -JarFile=${JarFile} \
+    -SqlFilter=sql_${MasterDbType} \
+    -Company=${CompanyId} \
+    -DbServer=${MasterDbServer} \
+    -DbPort=${MasterDbPort} \
+    -DbSchema=${MasterDbSchema} \
+    -DbName=${MasterDbName} \
+    -DbUser=${MasterDbUserID} \
+    -DbPassword=${MasterDbUserPassword};"
+  echo exec: ${COMMOND};
+  eval $(echo ${COMMOND});
+} 
 # 未提供工作目录，尝试取tomcat/webapps/目录
 if [ "${DEPLOY_FOLDER}" == "" ];then
   if [ "${CATALINA_HOME}" != "" ];then DEPLOY_FOLDER=${CATALINA_HOME}/webapps; fi;  
@@ -97,30 +117,31 @@ fi
 while read folder
 do
   echo --${folder}
-    for file in `ls "${DEPLOY_FOLDER}/${folder}/WEB-INF/lib" | grep ibcp\.${folder}\-.`
-    do
-       echo ----${file}
 # 读取配置信息，用配置文件刷新变量
-       FILE_APP=${DEPLOY_FOLDER}/${folder}/WEB-INF/app.xml
-       if [ -e "${FILE_APP}" ]; then
-         getConfigValue ${FILE_APP};
-       fi;
-       COMMOND="java -Djava.ext.dirs=${TOOLS_FOLDER}/lib -jar \
-              ${TOOLS_TRANSFORM} dsJar \
-              -DsTemplate=ds_${MasterDbType}_ibas_classic.xml \
-              -JarFile=${DEPLOY_FOLDER}/${folder}/WEB-INF/lib/${file} \
-              -SqlFilter=sql_${MasterDbType} \
-              -Company=${CompanyId} \
-              -DbServer=${MasterDbServer} \
-              -DbPort=${MasterDbPort} \
-              -DbSchema=${MasterDbSchema} \
-              -DbName=${MasterDbName} \
-              -DbUser=${MasterDbUserID} \
-              -DbPassword=${MasterDbUserPassword};"
-         echo exec: ${COMMOND}
-         eval $(echo ${COMMOND})       
-       echo ----
-    done
+    FILE_APP=${DEPLOY_FOLDER}/${folder}/WEB-INF/app.xml
+    if [ -e "${FILE_APP}" ]; then
+      getConfigValue ${FILE_APP};
+    fi;
+# 使用模块目录jar包
+    if [ -e "${DEPLOY_FOLDER}/${folder}/WEB-INF/lib" ]
+    then
+      for file in `ls "${DEPLOY_FOLDER}/${folder}/WEB-INF/lib" | grep ibcp\.${folder}\-.`
+      do
+        echo ----${file}
+        createDS ${DEPLOY_FOLDER}/${folder}/WEB-INF/lib/${file};      
+        echo ----
+      done
+    fi;
+# 使用共享目录jar包
+    if [ -e "${CATALINA_HOME}/lib" ]
+    then
+      for file in `ls "${CATALINA_HOME}/lib" | grep ibcp\.${folder}\-.`
+      do
+        echo ----${file}
+        createDS ${CATALINA_HOME}/lib/${file};      
+        echo ----
+      done
+    fi;
     echo --
   done < "${DEPLOY_FOLDER}/ibcp.release.txt" | sed 's/\r//g'
 echo 操作完成
